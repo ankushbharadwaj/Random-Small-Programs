@@ -1,0 +1,66 @@
+def blackjack_hand_greater_than(hand_1, hand_2):
+    """
+    Return True if hand_1 beats hand_2, and False otherwise.
+    
+    In order for hand_1 to beat hand_2 the following must be true:
+    - The total of hand_1 must not exceed 21
+    - The total of hand_1 must exceed the total of hand_2 OR hand_2's total must exceed 21
+    
+    Hands are represented as a list of cards. Each card is represented by a string.
+    
+    When adding up a hand's total, cards with numbers count for that many points. Face
+    cards ('J', 'Q', and 'K') are worth 10 points. 'A' can count for 1 or 11.
+    
+    When determining a hand's total, you should try to count aces in the way that 
+    maximizes the hand's total without going over 21. e.g. the total of ['A', 'A', '9'] is 21,
+    the total of ['A', 'A', '9', '3'] is 14.
+    
+    Examples:
+    >>> blackjack_hand_greater_than(['K'], ['3', '4'])
+    True
+    >>> blackjack_hand_greater_than(['K'], ['10'])
+    False
+    >>> blackjack_hand_greater_than(['K', 'K', '2'], ['3'])
+    False
+    """
+    hand_1_total = 0
+    hand_2_total = 0
+    a_h1_count = 0;
+    for i in hand_1:
+        if i.isdigit():
+            hand_1_total += int(i)
+        else:
+            if i == 'K' or i == 'Q' or i == 'J':
+                hand_1_total += 10
+            if i == 'A':
+                a_h1_count += 1
+    if a_h1_count != 0:
+        while a_h1_count != 0:
+            if hand_1_total < 10:
+                hand_1_total += 11
+            else:
+                hand_1_total += 1
+            a_h1_count-=1
+    a_h2_count = 0;
+    for i in hand_2:
+        if i.isdigit():
+            hand_2_total += int(i)
+        else:
+            if i == 'K' or i == 'Q' or i == 'J':
+                hand_2_total += 10
+            if i == 'A':
+                a_h2_count+=1
+    if a_h2_count != 0:
+        while a_h2_count != 0:
+            if hand_2_total < 10:
+                hand_2_total += 11
+            else:
+                hand_2_total += 1
+            a_h2_count-=1   
+    if hand_1_total > 21:
+        return(False)
+    if hand_2_total > 21:
+        return(True)
+    if hand_1_total > hand_2_total:
+        return(True)
+    return(False)
