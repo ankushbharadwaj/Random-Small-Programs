@@ -1,0 +1,87 @@
+//
+//  main.cpp
+//  infinite_monkey_1
+//
+//  Created by Ankush Bharadwaj on 3/26/19.
+//  Copyright © 2019 Ankush Bharadwaj. All rights reserved.
+//
+
+#include <iostream>
+#include <string>
+#include <ctime>
+#include <cstdlib>
+using namespace std;
+
+string randomize(size_t len);
+
+void mutate(string mutated_strings[], string s, size_t len);
+
+string select(string mutated_strings[], string s, size_t len);
+
+string randomize(size_t len) {
+    string randomized_string;
+    for (size_t i = 0; i < len; i++) {
+        randomized_string += 'A' + rand()%26;
+    }
+    return randomized_string;
+}
+
+void mutate(string mutated_strings[], string s, size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        int index_of_mutation = rand()%(len);
+        string random_char;
+        int rand_val = rand()%27;
+        if (rand_val == 26)
+            random_char += ' ';
+        else
+            random_char += 'A' + rand()%27;
+        mutated_strings[i] = s.substr(0,index_of_mutation) + (random_char) + s.substr(index_of_mutation+1);
+    }
+}
+
+string select(string mutated_strings[], string s, size_t len) {
+    int similarity[len];
+    string selected_string;
+    for (size_t k = 0; k < len; k++) {
+        similarity[k] = 0;
+    }
+    for (size_t i = 0; i < len; i++) {
+        for (size_t j = 0; j < len; j++) {
+            if (mutated_strings[i].at(j) == s.at(j)) {
+                similarity[i] += 1;
+            }
+        }
+    }
+    int max = INT_MIN;
+    for (size_t k = 0; k < len; k++) {
+        if (similarity[k] > max)
+            max = k;
+    }
+    selected_string = mutated_strings[max];
+    return selected_string;
+}
+
+int main() {
+    srand(time(0));
+    string target_string;
+    string randomized_string;
+    string selected_string;
+    int count = 0;
+    cout << "Target string (uppercase):" << endl;
+    getline(cin, target_string);
+    string mutated_strings[target_string.length()];
+    randomized_string = randomize(target_string.length());
+    mutate(mutated_strings, randomized_string, target_string.length());
+    cout << endl;
+    cout << "TARGET STRING: " << target_string << endl;
+    selected_string = select(mutated_strings,target_string,target_string.length());
+    while (selected_string != target_string) {
+        mutate(mutated_strings, selected_string, target_string.length());
+        selected_string = select(mutated_strings,target_string,target_string.length());
+        count++;
+    }
+    cout << "STRING REACHED: " << selected_string << endl;
+    cout << "Took " << count << " generations to reach target string." << endl;
+    return 0;
+    
+}
